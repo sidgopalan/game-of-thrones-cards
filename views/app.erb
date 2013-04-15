@@ -1,0 +1,33 @@
+<script>
+	$(function(){
+		gotApp = new Marionette.Application();
+		gotApp.addRegions({
+			nav:'div#nav-region',
+		});
+		gotApp.addInitializer(function(options){
+			var nav_view = new NavView();
+
+			gotApp.nav.show(nav_view);
+		});
+
+		gotApp.start({games:<%= games.values.map(&:state).to_json %>});
+	});
+
+</script>
+
+<div class="container">
+	<div id='nav-region'>
+</div>
+
+<script type='text/template', id='nav_template'>
+	<button class='btn btn-create'>New Game</button>
+	<div>
+		<input type='text'></input>
+		<button class='btn btn-load'>Join</button>
+	</div>
+</script>
+
+
+<script type='text/template', id='house_template'>
+
+</script>

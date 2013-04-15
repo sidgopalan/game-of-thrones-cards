@@ -44,7 +44,8 @@ class AppServer < Sinatra::Base
       pinion.create_bundle(:app_js, :concatenate_and_uglify_js, [
           "/js/game_selection.js",
           "/js/game.js",
-          "/js/house.js"
+          "/js/house.js",
+          "/js/game_app.js"
       ])
       pinion.create_bundle(:vendor_js, :concatenate_and_uglify_js, [
           "/vendor/jquery-1.8.2.min.js",
@@ -115,6 +116,10 @@ class AppServer < Sinatra::Base
 
   get "/" do
     erb :game_selection, :locals => { :games => @@games }
+  end
+
+  get "/app" do
+    erb :app, :locals => { :games => @@games }
   end
 
   post "/ui/games" do

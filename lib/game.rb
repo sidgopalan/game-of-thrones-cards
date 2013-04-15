@@ -18,4 +18,6 @@ class Game
   def reset
     @houses.each(&:reset)
   end
+
+  
 end
