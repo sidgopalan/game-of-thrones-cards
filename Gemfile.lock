@@ -19,6 +19,7 @@ GEM
     execjs (1.4.0)
       multi_json (~> 1.0)
     method_source (0.8.1)
+    minitest (4.7.0)
     multi_json (1.7.2)
     pry (0.9.12)
       coderay (~> 1.0.5)
@@ -33,6 +34,8 @@ GEM
     rack-test (0.6.2)
       rack (>= 1.0)
     sass (3.2.7)
+    scope (0.2.3.1)
+      minitest
     sinatra (1.3.6)
       rack (~> 1.4)
       rack-protection (~> 1.3)
@@ -56,7 +59,9 @@ PLATFORMS
 DEPENDENCIES
   coffee-script
   pry-debugger
+  rack-test
   sass
+  scope
   sinatra
   sinatra-contrib
   uglifier

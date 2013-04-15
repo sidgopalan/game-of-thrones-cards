@@ -9,3 +9,7 @@ group :development do
   gem "pry-debugger"
 end
 
+group :test do
+  gem "scope"
+  gem "rack-test"
+end
