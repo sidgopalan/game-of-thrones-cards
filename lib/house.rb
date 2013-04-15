@@ -1,4 +1,5 @@
 class House
+  attr_reader :house_name, :cards
   HOUSE_NAMES = ["baratheon", "lannister", "stark", "greyjoy", "tyrell", "martell"]
 
   HOUSE_BARATHEON = {

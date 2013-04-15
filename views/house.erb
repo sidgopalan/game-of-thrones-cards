@@ -1,0 +1,25 @@
+<div data-role="header" data-game-name="<%= game.name %>" data-house-name="<%= house.house_name.downcase %>">
+  <h1><%= house.house_name %></h1>
+</div>
+
+<div data-role="content">
+  <ul data-role="listview" data-inset="true" class="card-list-view">
+    <% house.cards.each do |card_key, card_details| %>
+      <li data-icon="false">
+        <a href="#" class="house-card-link" data-card-key="<%= card_key %>"
+               data-card-status='<%= card_details[:status] == "used" ? "used-card" : "" %>'>
+          <h2><%= card_details[:name] %> &nbsp; (<%= card_details[:strength] %>)</h2>
+          <p><%= card_details[:special_ability] %></p>
+          <span class="ui-li-aside">
+            <% (0...card_details[:swords]).each do %>
+              <img class="sword-icon" src="/images/sword.png" />
+            <% end %>
+            <% (0...card_details[:fortresses]).each do %>
+              <img class="fortress-icon" src="/images/fortress.png" />
+            <% end %>
+          </span>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+</div>

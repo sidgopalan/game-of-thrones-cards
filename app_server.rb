@@ -42,7 +42,8 @@ class AppServer < Sinatra::Base
     unless defined?(@@pinion_setup) && @@pinion_setup
       @@pinion_setup = true
       pinion.create_bundle(:app_js, :concatenate_and_uglify_js, [
-          "/js/game_selection.js"
+          "/js/game_selection.js",
+          "/js/game.js"
       ])
       pinion.create_bundle(:vendor_js, :concatenate_and_uglify_js, [
           "/vendor/jquery-1.8.2.min.js",
@@ -123,6 +124,14 @@ class AppServer < Sinatra::Base
 
   get "/ui/games/:game_name" do
     erb :game, :locals => { :game => @@games[params[:game_name]] }, :layout => false
+  end
+
+  get "/ui/games/:game_name/houses/:house_name" do
+    game_name = params[:game_name]
+    house_name = params[:house_name]
+    @game = @@games[game_name]
+    @house = @game.houses[house_name]
+    erb :house, :locals => { :house => @house, :game => @game }, :layout => false
   end
 
   def body_params
