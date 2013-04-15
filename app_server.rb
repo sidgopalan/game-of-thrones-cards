@@ -43,7 +43,8 @@ class AppServer < Sinatra::Base
       @@pinion_setup = true
       pinion.create_bundle(:app_js, :concatenate_and_uglify_js, [
           "/js/game_selection.js",
-          "/js/game.js"
+          "/js/game.js",
+          "/js/house.js"
       ])
       pinion.create_bundle(:vendor_js, :concatenate_and_uglify_js, [
           "/vendor/jquery-1.8.2.min.js",
