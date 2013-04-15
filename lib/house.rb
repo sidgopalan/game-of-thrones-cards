@@ -382,8 +382,12 @@ class House
     @cards = House.const_get("HOUSE_#{house_name.upcase}").dup
   end
 
-  def to_json(options = {})
-    @cards.to_json
+  def update_card_status(card_name, card_status)
+    @cards[card_name][:status] = card_status
+  end
+
+  def state
+    { :name => @house_name, :cards => @cards }
   end
 
   def reset

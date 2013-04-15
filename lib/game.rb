@@ -9,8 +9,10 @@ class Game
     House::HOUSE_NAMES.each { |house_name| @houses[house_name] = House.new(house_name) }
   end
 
-  def to_json
-    { :name => @name, :houses => @houses }.to_json
+  def state
+    game_state = { :name => @name, :houses => {} }
+    @houses.each { |house_name, house| game_state[:houses][house_name] = house.state }
+    game_state
   end
 
   def reset
