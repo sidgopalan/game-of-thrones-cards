@@ -1,2 +1,4 @@
 require "./app_server"
-run AppServer.new
+
+map(AppServer.pinion.mount_point) { run AppServer.pinion }
+map("/") { run AppServer }

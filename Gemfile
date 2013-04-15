@@ -4,6 +4,7 @@ gem "coffee-script"
 gem "sinatra-contrib"
 gem "sass"
 gem "uglifier"
+gem "pinion"
 
 group :development do
   gem "pry-debugger"

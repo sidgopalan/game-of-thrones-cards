@@ -3,10 +3,14 @@ require "sinatra/base"
 require "sinatra/reloader"
 require "json"
 require "coffee-script"
+require "pinion"
+require "pinion/sinatra_helpers"
 
 require_relative "lib/game"
 
 class AppServer < Sinatra::Base
+  set :pinion, Pinion::Server.new("/assets")
+
   configure :development do
     register Sinatra::Reloader
     also_reload "lib/*"
@@ -27,7 +31,27 @@ class AppServer < Sinatra::Base
 
     # TODO (sid): Store this in Redis if multiple workers are needed
     @@games = {}
+
+    pinion.convert :scss => :css
+    pinion.convert :coffee => :js
+    pinion.watch "public"
+
+    # In development mode, Sinatra::Reloader reloads the app when files are changed. This causes
+    # the pinion create_bundle code to be invoked again. When that happens, Pinion throws an error since the
+    # bundle has already been created. Make sure the pinion bundles are only created once
+    unless defined?(@@pinion_setup) && @@pinion_setup
+      @@pinion_setup = true
+      pinion.create_bundle(:app_js, :concatenate_and_uglify_js, [
+          "/js/game_selection.js"
+      ])
+      pinion.create_bundle(:vendor_js, :concatenate_and_uglify_js, [
+          "/vendor/jquery-1.8.2.min.js",
+          "/vendor/jquery.mobile-1.3.0.min.js"
+      ])
+    end
   end
+
+  helpers Pinion::SinatraHelpers
 
   get "/healthz" do
     "Game of Thrones Cards Reference Server is healthy!"
@@ -85,6 +109,20 @@ class AppServer < Sinatra::Base
   post "/games/:game_name/houses/:house_name/reset" do
     @house.reset
     @house.state.to_json
+  end
+
+  get "/" do
+    erb :game_selection, :locals => { :games => @@games }
+  end
+
+  post "/ui/games" do
+    game_name = body_params["name"]
+    @@games[game_name] = Game.new(game_name) unless @@games.has_key?(game_name)
+    erb :game, :locals => { :game => @@games[game_name] }, :layout => false
+  end
+
+  get "/ui/games/:game_name" do
+    erb :game, :locals => { :game => @@games[params[:game_name]] }, :layout => false
   end
 
   def body_params
