@@ -29,6 +29,7 @@ var GameView = Marionette.ItemView.extend({
 		var game = this.ui.name.text();
 		// window.location = "#"+game;
 		gotApp.router.navigate("#"+game, {trigger:true});
+		return false;
 	},
 });
 
@@ -62,6 +63,12 @@ var HousesView = Marionette.ItemView.extend({
 			self.model.fetch();
 			//self.render();
 		});
+
+		gotApp.vent.on('click:house', function(gamehouse){
+			self.house = gamehouse.house;
+			self.render();
+		});
+		
 		this.listenTo(this.model, 'sync', this.render);
 	},
 
@@ -123,10 +130,9 @@ var HousesView = Marionette.ItemView.extend({
 	},
 
 	selectHouse:function(evt){
+		var game = this.model.get('name');
 		var house = $(evt.target).closest('tr').attr('data-house');
-		this.house = house;
-		this.render();
-		gotApp.vent.trigger('select:house', house);
+		gotApp.router.navigate("#"+game + "/"+house, {trigger:true});
 	},
 
 	selectCard:function(evt) {
@@ -205,8 +211,11 @@ var AppLayout = Marionette.Layout.extend({
 		gotApp.vent.on('allgames', function(game){
 			self.allGames();
 		});
-		gotApp.vent.on('select:house', function(house){
+		gotApp.vent.on('update:nav:house', function(house){
 			self.selectHouse(house);
+		});		
+		gotApp.vent.on('click:house', function(gamehouse){
+			
 		});
 	},
 
@@ -231,7 +240,7 @@ var AppLayout = Marionette.Layout.extend({
 		if( $(e.target).closest('li').hasClass('active') ) {
 			// console.log('ignored:'+e.target);
 				e.preventDefault();
-				return;
+				return false;
 		}
 
 		if( $(e.target).closest('li').attr('id') == 'game' ) {
@@ -240,6 +249,7 @@ var AppLayout = Marionette.Layout.extend({
 			this.ui.nav.find('#house').remove();
 			this.ui.nav.find('#game').addClass('active');
 			e.preventDefault();
+			return false;
 		} else {
 
 		}
@@ -255,10 +265,12 @@ var AppLayout = Marionette.Layout.extend({
 		this.ui.btn_create.show();
 	},
 
-	joinGame:function(game) {
+	joinGame:function(game) {		
 		this.main.show(new HousesView({model:this.collection.get(game)}));
 		// this.main.$el.find('div[data-role="collapsible-set"]').collapsibleset('refresh');
-		this.ui.nav.find('#house').remove();		
+		this.ui.nav.find('#house').remove();
+		this.ui.nav.find('#game').remove();
+		
 		$('<li></li>')
 			.addClass('active')
 			.attr('id', 'game')
@@ -273,7 +285,14 @@ var AppLayout = Marionette.Layout.extend({
 AppRouter = Backbone.Router.extend({
 	routes:{
 		':game_name' : 'joinGame',
+		':game_name/:house_name' : 'selectHouse',
 		'*action' : 'default',
+	},
+
+	selectHouse:function(game_name, house_name) {
+		console.log(game_name+","+house_name);
+		gotApp.vent.trigger('click:house', {game:game_name, house:house_name});
+		gotApp.vent.trigger('update:nav:house', house_name);
 	},
 
 	joinGame:function(game_name) {
