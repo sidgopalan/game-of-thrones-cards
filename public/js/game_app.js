@@ -54,12 +54,15 @@ var HousesView = Marionette.ItemView.extend({
 		'click tr.house' : 'selectHouse',
 		'click tr.card'  : 'selectCard',
 	},
+
 	initialize:function() {
 		var self = this;
 		gotApp.vent.on('nav:game', function(game){
 			self.house = null;
-			self.render();
+			self.model.fetch();
+			//self.render();
 		});
+		this.listenTo(this.model, 'sync', this.render);
 	},
 
 
@@ -69,19 +72,52 @@ var HousesView = Marionette.ItemView.extend({
 
 		if(!this.house) {
 
-			$('<tr class="house" data-house="baratheon"><td>Baratheon</td></tr>').appendTo(this.ui.content);
-			$('<tr class="house" data-house="lannister"><td>Lannister</td></tr>').appendTo(this.ui.content);
-			$('<tr class="house" data-house="stark"><td>Stark</td></tr>').appendTo(this.ui.content);
-			$('<tr class="house" data-house="greyjoy"><td>Greyjoy</td></tr>').appendTo(this.ui.content);
-			$('<tr class="house" data-house="tyrell"><td>Tyrell</td></tr>').appendTo(this.ui.content);
-			$('<tr class="house" data-house="martell"><td>Martell</td></tr>').appendTo(this.ui.content);
+			var houses = this.model.get('houses');
+
+			for(var h in houses ) {
+				var house = houses[h];
+
+				var row = $("<tr></tr>")
+					.addClass('house')
+					.attr('data-house', h);
+
+				var cell = $("<td></td>")
+					.append("<strong>"+house.name+"</strong>");
+				var cards = $("<div></div>")
+					.addClass('pull-right');
+
+				for(c in house.cards) {
+					var card = house.cards[c];
+
+					if( card.status == 'used') {
+						cards.append("<span class='badge badge-important'>"+card.strength+"</span> ");
+					} else  {
+						cards.append("<span class='badge'>"+card.strength+"</span> ");
+					}
+				}
+
+				cell.append(cards);
+				row.append(cell).appendTo(this.ui.content);
+
+			}
 		} else {
 			var cards = this.model.get('houses')[this.house].cards;
+			for( var name in cards ) {
+				var card = cards[name];
+				var cell = $("<td></td>")
+					.append("<span class='badge badge-warning'>"+card.strength+"</span>")
+					.append(" <Strong>"+card.name+"</Strong>")
+					.append("<span class='pull-right'><span class='badge'>"+card.swords+"</span> <span class='badge'>"+card.fortresses+"</span></span>")
+					.append("<div>"+card.special_ability+"</div>");
 
-			var names = Object.keys(cards);
-			for( name in cards ) {
-				$('<tr class="card"><td>'+cards[name].name+'</td></tr>')
-				.appendTo(this.ui.content);
+				var row = $('<tr class="card"></tr>').append(cell)
+					.attr('data-house', this.house)
+					.attr('data-card', name);
+					
+				if(card.status == 'used') {
+					row.addClass('error');
+				}
+				row.appendTo(this.ui.content);
 			}
 		}
 	},
@@ -94,7 +130,30 @@ var HousesView = Marionette.ItemView.extend({
 	},
 
 	selectCard:function(evt) {
+		var game = this.model.get('name');
+		var house = $(evt.target).closest('tr').attr('data-house');
+		var card = $(evt.target).closest('tr').attr('data-card');
 
+		console.log("house:"+house+", card:"+card);
+
+		var status = this.model.get('houses')[house].cards[card].status;
+		var newStatus = '';
+		if (status == 'used') {
+			$(evt.target).closest('tr').removeClass('error');
+			newStatus = 'unused';
+			this.model.get('houses')[house].cards[card].status = "unused";
+		} else {
+			$(evt.target).closest('tr').addClass('error');			
+			newStatus = 'used';
+			this.model.get('houses')[house].cards[card].status = "used";
+		}
+
+		requestBody = [{ "card_name": card, "card_status": newStatus }]
+		$.ajax({
+			type: "PUT",
+			url: "/games/"+game+"/houses/"+house,
+			data: JSON.stringify(requestBody)
+		 });
 	},
 
 
@@ -170,7 +229,7 @@ var AppLayout = Marionette.Layout.extend({
 	doNav:function(e){
 
 		if( $(e.target).closest('li').hasClass('active') ) {
-			console.log('ignored:'+e.target);
+			// console.log('ignored:'+e.target);
 				e.preventDefault();
 				return;
 		}
