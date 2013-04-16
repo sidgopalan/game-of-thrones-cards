@@ -8,10 +8,10 @@ gem "pinion"
 
 
 group :development do
-  # gem "pry-debugger"
+  gem "pry-debugger"
 end
 
 group :test do
-  # gem "scope"
+  gem "scope"
   gem "rack-test"
 end
