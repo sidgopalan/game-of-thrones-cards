@@ -119,7 +119,7 @@ class AppServer < Sinatra::Base
   end
 
   get "/app" do
-    erb :app, :locals => { :games => @@games }
+    erb :app, :locals => { :games => @@games }, :layout => :appshell
   end
 
   post "/ui/games" do

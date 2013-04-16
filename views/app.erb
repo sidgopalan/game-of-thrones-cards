@@ -1,50 +1,62 @@
 <script>
+$(document).bind("mobileinit", function(){
+        $.mobile.ajaxEnabled = false;
+        $.mobile.hashListeningEnabled = false;
+      });
 	$(function(){
 		gotApp = new Marionette.Application();
 		gotApp.addRegions({
-			container:'div.container',
+			container:'div#layout-region',
 		});
 
 		gotApp.addInitializer(function(options){
 			var layout = new AppLayout({collection:options.games});
 			gotApp.container.show(layout);
+
+			gotApp.router =  new AppRouter();
+			Backbone.history.start();
 		});
 
 		var games = new GamesCollection(<%= games.values.map(&:state).to_json %>);
 		gotApp.start({games:games, });
+
 	});
 
 </script>
 
 <script type='text/template' id="games_template">
-	<thead><tr><th>Games</th></tr></thead>
 	<tbody>
 	</tbody>
 </script>
 
+
 <script type='text/template' id='game_template'>
-	<td><span class='name'></span></td>
+	<td></td>
 </script>
 
 
 <script type='text/template' id='layout_template'>
 	<div class='navbar navbar-static-top'>
-		<div class='navbar-inner'>
-			<button class='btn btn-back'>Back</button>
-			<button class='btn btn-create'>New</button>
-			<ul class='nav pull-right'>
-					<li ><a href='#'>Games</a></li>
-					<li><a href='#'>Houses</a></li>
-			</ul>		
+		<div class='navbar-inner'>			
+			<ul class='nav'>
+				<li class='active' id='allgames'><a href='#'>Games</a></li>
+			</ul>	
+			<button class='btn btn-create pull-right'>New</button>
 		</div>
 	</div>
 	<div id='main-region'></div>
 </script>
 
-<script type='text/template' id='houses_template'>
-	<div data-role='collapsible-set' data-theme='c' data-content-theme'd'>		
-	</div>
+<script type='text/template' id='houses_template'>	
+	<tbody>
+	<tr><td><a href="#">Baratheon</a></td></tr>
+	<tr><td><a href="#">Lannister</a></td></tr>
+	<tr><td><a href="#">Stark</a></td></tr>
+	<tr><td><a href="#">Greyjoy</a></td></tr>
+	<tr><td><a href="#">Tyrell</a></td></tr>
+	<tr><td><a href="#">Martell</a></td></tr>
+	</tbody>
 </script>
 
 
-<div class="container"></div>
+<div id="layout-region"></div>

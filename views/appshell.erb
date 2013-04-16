@@ -3,21 +3,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Game of Thrones Board Game: House Cards Reference</title>
 
-    <%= css_url("/vendor/jquery.mobile-1.3.0.css") %>
-    <%= css_url("/scss/main.css") %>
    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
-<!--
+    <%= css_url("/scss/main.css") %>
  
     <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
-    <script src='//cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.3.1/jquery.mobile.min.js'></script>
 
--->
-
-
-    <%= js_bundle(:vendor_js) %>
-
-<!--    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
--->
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
 
     <script src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js'></script>
     <script src='//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js'></script>
@@ -28,8 +19,6 @@
     
   </head>
   <body>
-    <div data-role="page" id="mainPageDiv">
       <%= yield %>
-    </div>
   </body>
 </html>
