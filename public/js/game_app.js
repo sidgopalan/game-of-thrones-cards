@@ -38,12 +38,6 @@ var GamesView = Marionette.CompositeView.extend({
 	className:'table',
 	itemView: GameView,
 	itemViewContainer:'tbody',
-
-	onShow:function(){
-		console.log('done');
-
-		this.$el.parent().trigger('create');
-	}
 });
 
 
@@ -52,10 +46,58 @@ var HousesView = Marionette.ItemView.extend({
 	tagName:'table',
 	className:'table',
 	
-	onShow:function() {
-		// this.$el.listview().listview('refresh');
-		this.$el.parent().trigger('create');
+	ui:{
+		content:'tbody',
 	},
+
+	events:{
+		'click tr.house' : 'selectHouse',
+		'click tr.card'  : 'selectCard',
+	},
+	initialize:function() {
+		var self = this;
+		gotApp.vent.on('nav:game', function(game){
+			self.house = null;
+			self.render();
+		});
+	},
+
+
+	onRender:function(){
+		
+		this.ui.content.empty();
+
+		if(!this.house) {
+
+			$('<tr class="house" data-house="baratheon"><td>Baratheon</td></tr>').appendTo(this.ui.content);
+			$('<tr class="house" data-house="lannister"><td>Lannister</td></tr>').appendTo(this.ui.content);
+			$('<tr class="house" data-house="stark"><td>Stark</td></tr>').appendTo(this.ui.content);
+			$('<tr class="house" data-house="greyjoy"><td>Greyjoy</td></tr>').appendTo(this.ui.content);
+			$('<tr class="house" data-house="tyrell"><td>Tyrell</td></tr>').appendTo(this.ui.content);
+			$('<tr class="house" data-house="martell"><td>Martell</td></tr>').appendTo(this.ui.content);
+		} else {
+			var cards = this.model.get('houses')[this.house].cards;
+
+			var names = Object.keys(cards);
+			for( name in cards ) {
+				$('<tr class="card"><td>'+cards[name].name+'</td></tr>')
+				.appendTo(this.ui.content);
+			}
+		}
+	},
+
+	selectHouse:function(evt){
+		var house = $(evt.target).closest('tr').attr('data-house');
+		this.house = house;
+		this.render();
+		gotApp.vent.trigger('select:house', house);
+	},
+
+	selectCard:function(evt) {
+
+	},
+
+
 });
 
 
@@ -74,25 +116,22 @@ var AppLayout = Marionette.Layout.extend({
 
 	events: {
 		'click .btn-create' : 'doCreateGame',
-		'click .btn-back' : ''
+		'click .nav li a' : 'doNav',
+
 	},
 
 	doCreateGame:function(){
-		console.log('create');
-
 		var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 		var hash = '';
 		for( var i=0; i < 4; i++ ) {
 			hash += possible.charAt(Math.floor(Math.random() * possible.length));
 		}
-		console.log('hash:'+hash);
 		var game = new GameModel();
 
 		game.save({}, {
-			url:'/ui/games',
 			data:JSON.stringify({ "name": hash }),
 			success:function(){
-				console.log('saved');
+				// console.log(game.toJSON());
 			}
 		});
 		game.set('name', hash);
@@ -107,37 +146,67 @@ var AppLayout = Marionette.Layout.extend({
 		gotApp.vent.on('allgames', function(game){
 			self.allGames();
 		});
-
-
+		gotApp.vent.on('select:house', function(house){
+			self.selectHouse(house);
+		});
 	},
 
 	onRender:function(){
-		this.main.show( new GamesView({collection:this.collection}));
-		// this.ui.header.parent().trigger('create');
+		this.allGames();
 	},
 
-	onShow:function(){
-		// console.log(this.$el);
-		// this.ui.header.trigger('create');
-		// this.$el.trigger('create');
-		// this.$el.prepend("<div data-role=\"header\">hi</div>");
-		// this.$el.trigger('create');
+	selectHouse:function(house) {
+		this.ui.nav.find('#house').remove();
+		$('<li></li>')
+			.addClass('active')
+			.attr('id', 'house')
+			.html("<a href='#'>"+house+"</a>")
+			.appendTo(this.ui.nav);
+		this.ui.nav.find('#allgames').removeClass('active');
+		this.ui.nav.find('#game').removeClass('active');
+		this.ui.btn_create.hide();
+	},
+
+	doNav:function(e){
+
+		if( $(e.target).closest('li').hasClass('active') ) {
+			console.log('ignored:'+e.target);
+				e.preventDefault();
+				return;
+		}
+
+		if( $(e.target).closest('li').attr('id') == 'game' ) {
+			gotApp.vent.trigger('nav:game');
+
+			this.ui.nav.find('#house').remove();
+			this.ui.nav.find('#game').addClass('active');
+			e.preventDefault();
+		} else {
+
+		}
+
+		// e.preventDefault();
 	},
 
 	allGames:function() {
 		this.main.show( new GamesView({collection:this.collection}));
+		this.ui.nav.find('#allgames').addClass('active');
 		this.ui.nav.find("#game").remove();
+		this.ui.nav.find("#house").remove();
+		this.ui.btn_create.show();
 	},
 
 	joinGame:function(game) {
 		this.main.show(new HousesView({model:this.collection.get(game)}));
 		// this.main.$el.find('div[data-role="collapsible-set"]').collapsibleset('refresh');
+		this.ui.nav.find('#house').remove();		
 		$('<li></li>')
 			.addClass('active')
 			.attr('id', 'game')
-			.html("<a href='#'>"+game+"</a>")
+			.html("<a href='#"+game+"'>"+game+"</a>")
 			.appendTo(this.ui.nav);
 		this.ui.nav.find('#allgames').removeClass('active');
+		this.ui.btn_create.hide();
 	}
 });
 
