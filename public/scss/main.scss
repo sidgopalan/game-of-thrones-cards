@@ -13,4 +13,31 @@
 }
 .card-list-view p { white-space:normal; }
 
+#baratheon-cards .badge {
+    background-color: rgb(255,205, 31);
+}
+
+#lannister-cards .badge {
+ background-color: rgb(153, 41, 29);   
+}
+
+#stark-cards .badge {
+ background-color: rgb(235, 234, 225);
+ color: rgb(60,60,60);   
+}
+
+#greyjoy-cards .badge {
+    background-color: black;
+}
+
+#tyrell-cards .badge {
+    background-color: rgb(51, 120, 43);
+}
+
+#martell-cards .badge {
+    background-color: rgb(255, 4, 0);
+}
+
+
 .used-card { background-color: rgb(170, 192, 180) }
+
