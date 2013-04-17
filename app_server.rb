@@ -16,6 +16,10 @@ class AppServer < Sinatra::Base
     also_reload "lib/*"
   end
 
+  configure :production do
+    require "newrelic_rpm"
+  end
+
   configure do
     STDOUT.sync = true
     set :show_exceptions, false

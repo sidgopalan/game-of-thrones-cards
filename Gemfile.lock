@@ -20,6 +20,7 @@ GEM
     method_source (0.8.1)
     minitest (4.7.1)
     multi_json (1.7.2)
+    newrelic_rpm (3.6.0.83)
     pinion (0.3.0)
       rack (~> 1.0)
     pry (0.9.12)
@@ -59,6 +60,7 @@ PLATFORMS
 
 DEPENDENCIES
   coffee-script
+  newrelic_rpm
   pinion
   pry-debugger
   rack-test

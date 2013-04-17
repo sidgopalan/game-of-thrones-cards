@@ -5,7 +5,7 @@ gem "sinatra-contrib"
 gem "sass"
 gem "uglifier"
 gem "pinion"
-
+gem "newrelic_rpm"
 
 group :development do
   gem "pry-debugger"
