@@ -23,11 +23,9 @@ var GameView = Marionette.ItemView.extend({
 	onRender:function(){
 		var name = this.model.get('name');
 		this.ui.name.html(name);
-		// this.ui.name.attr('href', '#'+name);
 	},
 	selectGame:function(evt){
 		var game = this.ui.name.text();
-		// window.location = "#"+game;
 		gotApp.router.navigate("#"+game, {trigger:true});
 		return false;
 	},
@@ -46,7 +44,7 @@ var HousesView = Marionette.ItemView.extend({
 	template:'#houses_template',
 	tagName:'table',
 	className:'table',
-	
+
 	ui:{
 		content:'tbody',
 	},
@@ -61,20 +59,19 @@ var HousesView = Marionette.ItemView.extend({
 		gotApp.vent.on('nav:game', function(game){
 			self.house = null;
 			self.model.fetch();
-			//self.render();
 		});
 
 		gotApp.vent.on('click:house', function(gamehouse){
 			self.house = gamehouse.house;
 			self.render();
 		});
-		
+
 		this.listenTo(this.model, 'sync', this.render);
 	},
 
 
 	onRender:function(){
-		
+
 		this.ui.content.empty();
 
 		if(!this.house) {
@@ -120,7 +117,7 @@ var HousesView = Marionette.ItemView.extend({
 				var row = $('<tr class="card"></tr>').append(cell)
 					.attr('data-house', this.house)
 					.attr('data-card', name);
-					
+
 				if(card.status == 'used') {
 					row.addClass('error');
 				}
@@ -149,7 +146,7 @@ var HousesView = Marionette.ItemView.extend({
 			newStatus = 'unused';
 			this.model.get('houses')[house].cards[card].status = "unused";
 		} else {
-			$(evt.target).closest('tr').addClass('error');			
+			$(evt.target).closest('tr').addClass('error');
 			newStatus = 'used';
 			this.model.get('houses')[house].cards[card].status = "used";
 		}
@@ -196,7 +193,6 @@ var AppLayout = Marionette.Layout.extend({
 		game.save({}, {
 			data:JSON.stringify({ "name": hash }),
 			success:function(){
-				// console.log(game.toJSON());
 			}
 		});
 		game.set('name', hash);
@@ -213,9 +209,9 @@ var AppLayout = Marionette.Layout.extend({
 		});
 		gotApp.vent.on('update:nav:house', function(house){
 			self.selectHouse(house);
-		});		
+		});
 		gotApp.vent.on('click:house', function(gamehouse){
-			
+
 		});
 	},
 
@@ -238,7 +234,6 @@ var AppLayout = Marionette.Layout.extend({
 	doNav:function(e){
 
 		if( $(e.target).closest('li').hasClass('active') ) {
-			// console.log('ignored:'+e.target);
 				e.preventDefault();
 				return false;
 		}
@@ -254,7 +249,6 @@ var AppLayout = Marionette.Layout.extend({
 
 		}
 
-		// e.preventDefault();
 	},
 
 	allGames:function() {
@@ -265,12 +259,11 @@ var AppLayout = Marionette.Layout.extend({
 		this.ui.btn_create.show();
 	},
 
-	joinGame:function(game) {		
+	joinGame:function(game) {
 		this.main.show(new HousesView({model:this.collection.get(game)}));
-		// this.main.$el.find('div[data-role="collapsible-set"]').collapsibleset('refresh');
 		this.ui.nav.find('#house').remove();
 		this.ui.nav.find('#game').remove();
-		
+
 		$('<li></li>')
 			.addClass('active')
 			.attr('id', 'game')
