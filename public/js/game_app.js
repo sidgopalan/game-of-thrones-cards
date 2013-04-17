@@ -89,7 +89,7 @@ var HousesView = Marionette.ItemView.extend({
 					.append("<strong>"+house.name+"</strong>");
 				var cards = $("<div></div>")
 					.addClass('pull-right');
-					.addId(house.name + "-cards");
+					.addClass(house.name + "-cards");
 
 				for(c in house.cards) {
 					var card = house.cards[c];
