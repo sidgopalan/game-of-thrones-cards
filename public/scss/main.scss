@@ -3,16 +3,18 @@
   td { vertical-align:middle; }
 }
 
-#baratheon-cards .badge { background-color: rgb(255,205, 31); }
-#lannister-cards .badge { background-color: rgb(153, 41, 29); }
-#greyjoy-cards .badge { background-color: black; }
-#tyrell-cards .badge { background-color: rgb(51, 120, 43); }
-#martell-cards .badge { background-color: rgb(255, 4, 0); }
+.baratheon-cards .badge { background-color: rgb(255,205, 31); }
+.lannister-cards .badge { background-color: rgb(153, 41, 29); }
+.greyjoy-cards .badge { background-color: black; }
+.tyrell-cards .badge { background-color: rgb(51, 120, 43); }
+.martell-cards .badge { background-color: rgb(255, 4, 0); }
 
-#stark-cards .badge {
+.stark-cards .badge {
   background-color: rgb(235, 234, 225);
   color: rgb(60,60,60);
 }
+
+.badge.badge-important {background-color: #666666; }
 
 .house, .navbar #house { text-transform:capitalize; }
 
