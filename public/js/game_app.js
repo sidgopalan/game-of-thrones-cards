@@ -88,7 +88,7 @@ var HousesView = Marionette.ItemView.extend({
 				var cell = $("<td></td>")
 					.append("<strong>"+house.name+"</strong>");
 				var cards = $("<div></div>")
-					.addClass('pull-right');
+					.addClass('pull-right')
 					.addClass(house.name + "-cards");
 
 				for(c in house.cards) {
